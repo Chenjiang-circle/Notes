@@ -6,5 +6,8 @@
 - <a href="./OS_宏">宏</a>
 - <a href="./OS_linux命令学习">Linux命令学习</a>
 - <a href="OS_GCC命令">GCC命令</a>
+- <a href="./OS_Shell学习">Shell学习</a>
 - 
+
+
 

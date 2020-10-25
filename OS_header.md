@@ -72,3 +72,36 @@ assert只有在 Debug 版本中才有效，如果编译为 Release 版本则被�
 
 对于类 Unix 系统，unistd.h 中所定义的接口通常都是大量针对系统调用的封装（英语：wrapper functions），如 fork、pipe 以及各种I/O 原语（read、write、close、getpid 等等）。
 
+## 5. `<sys/wait.h>`
+
+使用wait()和waitpid()函数时需要include这头文件。
+
+- wait（等待子进程中断或结束）
+
+  ```c
+  pid_t wait (int * status);
+  ```
+
+  wait()会暂时停止目前进程的执行，直到有信号来到或子进程结束。如果在调用wait()时子进程已经结束，则wait()会立即返回子进程结束状态值。子进程的结束状态值会由参数status返回，而子进程的进程识别码也会一起返回。如果不在意结束状态值，则参数status可以设成NULL。
+
+  *返回值* 如果执行成功则返回子进程识别码(PID)，如果有错误发生则返回-1。失败原因存于errno中。
+
+- waitpid（等待子进程中断或结束）
+
+  ```c
+  pid_t waitpid(pid_t pid,int * status,int options);
+  ```
+
+  如果在调用waitpid()时子进程已经结束,则 waitpid()会立即返回子进程结束状态值。 子进程的结束状态值会由参数 status 返回,而子进程的进程识别码也会一起返回。如果不在意结束状态值,则参数 status 可以设成 NULL。参数 pid 为欲等待的子进程识别码。
+
+  - pid<-1 等待[进程组](https://baike.baidu.com/item/进程组)识别码为 pid 绝对值的任何子进程。
+  - pid=-1 等待任何子进程,相当于 wait()。
+  - pid=0 等待进程组识别码与目前进程相同的任何子进程。
+  - pid>0 等待任何子进程识别码为 pid 的子进程。
+
+  参数options提供了一些额外的选项来控制waitpid，参数 option 可以为 0 或可以用"|"运算符把它们连接起来使用。
+
+  > `ret = waitpid(-1, NULL, WNOHANG | WUNTRACED);`
+
+  - WNOHANG 若pid指定的子进程没有结束，则waitpid()函数返回0，不予以等待。若结束，则返回该子进程的ID。
+  - WUNTRACED 若子进程进入暂停状态，则马上返回，但子进程的结束状态不予以理会。WIFSTOPPED(status)宏确定返回值是否对应与一个暂停子进程。
